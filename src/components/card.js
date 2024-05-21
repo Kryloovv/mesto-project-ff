@@ -1,13 +1,13 @@
-export const deleteCard = (evt) => {
+export const handlerDeleteClick = (evt) => {
   evt.target.parentElement.remove();
 }
 
-export const handlerLikeCards = (evt) => {
+export const handlerLikeCard = (evt) => {
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
 // Функция создания карточки
-export const createCard = (nameCard, linkImg, deleteCard, likeCards) => {
+export const createCard = (nameCard, linkImg, openImage, deleteCard, likeCard) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -17,11 +17,12 @@ export const createCard = (nameCard, linkImg, deleteCard, likeCards) => {
   const likeButton = cardElement.querySelector('.card__like-button');
 
   cardImage.src = linkImg;
-  cardImage.alt = `Реальность имеет свои пределы. Мир воображения безграничен. Представьте, что тут изображен(-а) - ${nameCard}`;
+  cardImage.alt = nameCard;
   cardTitle.textContent = nameCard;
 
+  cardImage.addEventListener('click', openImage);
   cardDeleteButton.addEventListener('click', deleteCard);
-  likeButton.addEventListener('click', likeCards);
+  likeButton.addEventListener('click', likeCard);
 
   return cardElement;
 }
