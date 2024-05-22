@@ -1,8 +1,8 @@
 import './pages/index.css';
 import { initialCards } from './cards.js';
-import { createCard, handleImageClick, handlerDeleteClick, handlerLikeCard } from './components/card.js';
-import { openModal, closeModal, handleOverlayClick, handleEscapeKeydown } from './components/modal.js';
-import { fillProfileValuesToForm, handleEditFormSubmit, handleNewCardFormSubmit } from './components/form.js';
+import { createCard, handleCardClick, handlerDeleteClick, handlerLikeCard } from './components/card.js';
+import { openModal, closeModal, handleOverlayClick } from './components/modal.js';
+import { fillProfileValuesToForm } from './components/form.js';
 
 // Глобальные константы
 const profileTitle = document.querySelector('.profile__title');
@@ -22,24 +22,14 @@ const cardNameInput = popupNewCard.querySelector('.popup__input_type_card-name')
 const cardUrlInput = popupNewCard.querySelector('.popup__input_type_url');
 
 const cardsContainer = document.querySelector('.places__list');
-const popupImage = document.querySelector('.popup_type_image');
+export const popupImage = document.querySelector('.popup_type_image');
 const imageCloseButton = popupImage.querySelector('.popup__close');
-const popupImageCard = document.querySelector('.popup__image');
-const popuppImageCardCaption = document.querySelector('.popup__caption');
+export const popupImageCard = document.querySelector('.popup__image');
+export const popuppImageCardCaption = document.querySelector('.popup__caption');
 
 // Функции
 initialCards.forEach( (objCard) => {
-  cardsContainer.append(createCard(
-    objCard.name,
-    objCard.link,
-    (evt) => {
-      popupImageCard.src = evt.currentTarget.src;
-      popupImageCard.alt = evt.currentTarget.alt;
-      popuppImageCardCaption.textContent = objCard.name;
-      openModal(popupImage);
-    },
-    handlerDeleteClick,
-    handlerLikeCard));
+  cardsContainer.append(createCard( objCard.name, objCard.link, handleCardClick, handlerDeleteClick, handlerLikeCard));
 })
 
 // Обработчики событий 
@@ -57,8 +47,6 @@ popupNewCard.addEventListener('click', handleOverlayClick);
 imageCloseButton.addEventListener('click', () => closeModal(popupImage));
 popupImage.addEventListener('click', handleOverlayClick);
 
-document.addEventListener('keydown', handleEscapeKeydown);
-
 formEdit.addEventListener('submit', (evt) => {
   evt.preventDefault();
   profileTitle.textContent = nameInput.value;
@@ -66,20 +54,9 @@ formEdit.addEventListener('submit', (evt) => {
   closeModal(popupEdit);
 });
 
-
 formNewPlace.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  cardsContainer.prepend(createCard(
-    cardNameInput.value,
-    cardUrlInput.value,
-    (evt) => {
-      popupImageCard.src = evt.currentTarget.src;
-      popupImageCard.alt = evt.currentTarget.alt;
-      popuppImageCardCaption.textContent = evt.currentTarget.alt;
-      openModal(popupImage);
-    },
-    handlerDeleteClick,
-    handlerLikeCard));
-    formNewPlace.reset();
-    closeModal(popupNewCard);
+  cardsContainer.prepend(createCard(cardNameInput.value, cardUrlInput.value, handleCardClick, handlerDeleteClick, handlerLikeCard));
+  formNewPlace.reset();
+  closeModal(popupNewCard);
 });

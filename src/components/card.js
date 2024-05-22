@@ -1,3 +1,13 @@
+import { openModal } from './modal.js';
+import { popupImage, popupImageCard, popuppImageCardCaption } from '../index.js';
+
+export const handleCardClick = (evt) => {
+  popupImageCard.src = evt.currentTarget.src;
+  popupImageCard.alt = evt.currentTarget.alt;
+  popuppImageCardCaption.textContent = evt.currentTarget.alt;
+  openModal(popupImage);
+}
+
 export const handlerDeleteClick = (evt) => {
   evt.target.parentElement.remove();
 }
@@ -20,7 +30,9 @@ export const createCard = (nameCard, linkImg, openImage, deleteCard, likeCard) =
   cardImage.alt = nameCard;
   cardTitle.textContent = nameCard;
 
-  cardImage.addEventListener('click', openImage);
+  cardImage.addEventListener('click', (evt) => {
+    handleCardClick(evt);
+  });
   cardDeleteButton.addEventListener('click', deleteCard);
   likeButton.addEventListener('click', likeCard);
 
