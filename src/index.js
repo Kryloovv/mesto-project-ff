@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { initialCards } from './cards.js';
-import { createCard, handleCardClick, handlerDeleteClick, handlerLikeCard } from './components/card.js';
+import { createCard, handlerDeleteClick, handlerLikeCard } from './components/card.js';
 import { openModal, closeModal, handleOverlayClick } from './components/modal.js';
 import { fillProfileValuesToForm } from './components/form.js';
 
@@ -22,12 +22,19 @@ const cardNameInput = popupNewCard.querySelector('.popup__input_type_card-name')
 const cardUrlInput = popupNewCard.querySelector('.popup__input_type_url');
 
 const cardsContainer = document.querySelector('.places__list');
-export const popupImage = document.querySelector('.popup_type_image');
+const popupImage = document.querySelector('.popup_type_image');
 const imageCloseButton = popupImage.querySelector('.popup__close');
-export const popupImageCard = document.querySelector('.popup__image');
-export const popuppImageCardCaption = document.querySelector('.popup__caption');
+const popupImageCard = document.querySelector('.popup__image');
+const popuppImageCardCaption = document.querySelector('.popup__caption');
 
 // Функции
+const handleCardClick = (evt) => {
+  popupImageCard.src = evt.currentTarget.src;
+  popupImageCard.alt = evt.currentTarget.alt;
+  popuppImageCardCaption.textContent = evt.currentTarget.alt;
+  openModal(popupImage);
+}
+
 initialCards.forEach( (objCard) => {
   cardsContainer.append(createCard( objCard.name, objCard.link, handleCardClick, handlerDeleteClick, handlerLikeCard));
 })
