@@ -1,13 +1,21 @@
-export const handlerDeleteClick = (evt) => {
-  evt.target.parentElement.remove();
+import { deleteCard, toggleLike } from './api.js';
+
+export const handlerDeleteIconClick = (cardElement, cardID) => {
+  deleteCard(cardID)
+    .then(() => cardElement.remove());
 }
 
-export const handlerLikeCard = (evt) => {
-  evt.target.classList.toggle('card__like-button_is-active');
+export const handlerLikeIconCard = (cardID, likeButton, likesCount) => {
+  const isLiked = likeButton.classList.contains("card__like-button_is-active");
+  toggleLike(cardID, isLiked)
+    .then((cardData) => {
+      likeButton.classList.toggle('card__like-button_is-active');
+      likesCount.textContent = cardData.likes.length;
+    })
 }
 
 // Функция создания карточки
-export const createCard = (nameCard, linkImg, openImage, deleteCard, likeCard) => {
+export const createCard = (cardData, userID, onImage, onDelete, onLike) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -15,16 +23,30 @@ export const createCard = (nameCard, linkImg, openImage, deleteCard, likeCard) =
   const cardImage = cardElement.querySelector('.card__image');
   const cardDeleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
+  const counterLikes = cardElement.querySelector('.card__like-counter');
+  
+  cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
+  cardTitle.textContent = cardData.name;
+  counterLikes.textContent = cardData.likes.length;
 
-  cardImage.src = linkImg;
-  cardImage.alt = nameCard;
-  cardTitle.textContent = nameCard;
-
-  cardImage.addEventListener('click', (evt) => {
-    openImage(evt);
+  cardData.likes.forEach((likeObj) => {
+    if (likeObj._id == userID) likeButton.classList.add('card__like-button_is-active')
   });
-  cardDeleteButton.addEventListener('click', deleteCard);
-  likeButton.addEventListener('click', likeCard);
+
+  cardImage.onerror = function() {
+    cardElement.remove();
+  }; 
+
+  cardImage.addEventListener('click', onImage);
+  likeButton.addEventListener('click', () => {
+    onLike(cardData._id, likeButton, counterLikes);
+  });
+  cardData.owner._id == userID ? 
+  cardDeleteButton.addEventListener('click', () => {
+    onDelete(cardElement, cardData._id);
+  }) : 
+  cardDeleteButton.remove();
 
   return cardElement;
 }
