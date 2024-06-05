@@ -7,39 +7,39 @@ import { getUserInfo, getInitialCards, userDataUpdate, addCard, avatarUpdate } f
 
 // - Глобальные константы
 // Кнопки для открытия popup-ов
-const editOpenButton = document.querySelector('.profile__edit-button');
-const newCardOpenButton = document.querySelector('.profile__add-button');
-const cardsContainer = document.querySelector('.places__list');
-const avatarOpenButton = document.querySelector('.profile__avatar-button');
+const buttonOpenPopupProfilel = document.querySelector('.profile__edit-button');
+const buttonOpenPopupNewCard = document.querySelector('.profile__add-button');
+const buttonOpenPopupAvatar = document.querySelector('.profile__avatar-button');
 
 // Информация о пользователе 
-const profileTitle = document.querySelector('.profile__title');
+const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 const profileImage = document.querySelector('.profile__image');
 
 // Popup и форма провфиля
-const popupEdit = document.querySelector('.popup_type_edit');
-const editCloseButton = popupEdit.querySelector('.popup__close');
-const formEdit = document.querySelector('.edit-profile');
-const nameInput = formEdit.querySelector('.popup__input_type_name');
-const jobInput = formEdit.querySelector('.popup__input_type_description');
+const popupProfilel = document.querySelector('.popup_type_edit');
+const buttonClosePopupProfilel = popupProfilel.querySelector('.popup__close');
+const formProfilel = document.querySelector('.edit-profile');
+const inputUpdateProfilelName = formProfilel.querySelector('.popup__input_type_name'); // inputUpdateName
+const inputUpdateProfilelDescription = formProfilel.querySelector('.popup__input_type_description');
 
 // Popup и форма аватара
 const popupAvatar = document.querySelector('.popup_type_avatar');
-const avatarCloseButton = popupAvatar.querySelector('.popup__close');
+const buttonClosePopupAvatar = popupAvatar.querySelector('.popup__close');
 const formAvatar = document.querySelector('.avatar');
-const avatarInput = formAvatar.querySelector('.popup__input_type_url');
+const inputUpdateAvatar = formAvatar.querySelector('.popup__input_type_url');
 
 // Popup и форма новой карточки
+const containerCards = document.querySelector('.places__list');
 const popupNewCard = document.querySelector('.popup_type_new-card');
-const newCardCloseButton = popupNewCard.querySelector('.popup__close');
+const buttonClosePopupNewCard = popupNewCard.querySelector('.popup__close');
 const formNewPlace = document.querySelector('.new-place');
-const cardNameInput = formNewPlace.querySelector('.popup__input_type_card-name');
-const cardUrlInput = formNewPlace.querySelector('.popup__input_type_url');
+const inputNameNewCard = formNewPlace.querySelector('.popup__input_type_card-name');
+const inputImageLinkNewCard = formNewPlace.querySelector('.popup__input_type_url');
 
 // Popup карточки
 const popupImage = document.querySelector('.popup_type_image');
-const imageCloseButton = popupImage.querySelector('.popup__close');
+const buttonClosePopupImage = popupImage.querySelector('.popup__close');
 const popupImageCard = document.querySelector('.popup__image');
 const popuppImageCardCaption = document.querySelector('.popup__caption');
 
@@ -52,11 +52,16 @@ const handleCardImgClick = (evt) => {
   openModal(popupImage);
 }
 
-// Загрузка карточек с Сервера
 Promise.all([getUserInfo(), getInitialCards()])
-  .then(([userData, cards]) => {
-    cards.forEach( (card) => {
-      cardsContainer.append(createCard(
+  .then(([userData, cardsData]) => {
+    // Загрузка инормации о пользователе с сервера
+    profileName.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImage.src = userData.avatar;
+
+    // Загрузка карточек с Сервера
+    cardsData.forEach( (card) => {
+      containerCards.append(createCard(
         card,
         userData._id,
         handleCardImgClick,
@@ -65,6 +70,7 @@ Promise.all([getUserInfo(), getInitialCards()])
       ));
     })
   })
+  .catch(err => console.log(err)); 
 
 // Включение валадации 
 enableValidation(validationConfig);
@@ -80,56 +86,49 @@ const renderLoading = (isLoading, form) => {
   }
 }
 
-// Загрузка инормации о пользователе с сервера
-getUserInfo()
-  .then((userInfo) => {
-    profileTitle.textContent = userInfo.name;
-    profileDescription.textContent = userInfo.about;
-    profileImage.src = userInfo.avatar;
-  })
-
 // - Обработчики событий
 // Открытие popup-ов
-editOpenButton.addEventListener('click', () => {
-  openModal(popupEdit);
+buttonOpenPopupProfilel.addEventListener('click', () => {
+  openModal(popupProfilel);
   //Подтягиваем информацию о пользователе в инпуты
-  fillProfileValuesToForm(nameInput, jobInput, profileTitle, profileDescription);
-  clearValidation(popupEdit, validationConfig);
+  fillProfileValuesToForm(inputUpdateProfilelName, inputUpdateProfilelDescription, profileName, profileDescription);
+  clearValidation(popupProfilel, validationConfig);
 });
 
-newCardOpenButton.addEventListener('click', () => {
+buttonOpenPopupNewCard.addEventListener('click', () => {
   openModal(popupNewCard);
   clearValidation(popupNewCard, validationConfig);
 });
 
-avatarOpenButton.addEventListener('click', () => {
+buttonOpenPopupAvatar.addEventListener('click', () => {
   openModal(popupAvatar);
   clearValidation(popupAvatar, validationConfig);
 });
 
 // Закрытие popup-ов
-editCloseButton.addEventListener('click', () => closeModal(popupEdit));
-newCardCloseButton.addEventListener('click', () => closeModal(popupNewCard));
-imageCloseButton.addEventListener('click', () => closeModal(popupImage));
-avatarCloseButton.addEventListener('click', () => closeModal(popupAvatar));
+buttonClosePopupProfilel.addEventListener('click', () => closeModal(popupProfilel));
+buttonClosePopupNewCard.addEventListener('click', () => closeModal(popupNewCard));
+buttonClosePopupImage.addEventListener('click', () => closeModal(popupImage));
+buttonClosePopupAvatar.addEventListener('click', () => closeModal(popupAvatar));
 
-popupEdit.addEventListener('click', handleOverlayClick);
+popupProfilel.addEventListener('click', handleOverlayClick);
 popupNewCard.addEventListener('click', handleOverlayClick);
 popupImage.addEventListener('click', handleOverlayClick);
 popupAvatar.addEventListener('click', handleOverlayClick);
 
 // Редактирование профиля
-formEdit.addEventListener('submit', (evt) => {
+formProfilel.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
   // Обновляем информацию о пользователе на сервере
-  renderLoading(true, formEdit);
-  userDataUpdate(nameInput.value, jobInput.value)
-    .finally(() => {
-      closeModal(popupEdit);
-      renderLoading(false, formEdit);
-    });
+  renderLoading(true, formProfilel);
+  userDataUpdate(inputUpdateProfilelName.value, inputUpdateProfilelDescription.value)
+    .then((userData) => {
+      profileName.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModal(popupProfilel);
+    })
+    .catch(err => console.log(err))
+    .finally(() => renderLoading(false, formProfilel));
 });
 
 // Обновление аватара 
@@ -137,15 +136,14 @@ formAvatar.addEventListener('submit', (evt) => {
   evt.preventDefault();
   renderLoading(true, formAvatar);
   // Сохраняем данные новой карточки на сервер
-  avatarUpdate(avatarInput.value)
+  avatarUpdate(inputUpdateAvatar.value)
     .then((profileData) => {
       profileImage.src = profileData.avatar;
+      formAvatar.reset();
       closeModal(popupAvatar);
     })
-    .finally(() => {
-      renderLoading(false, formAvatar);
-      formAvatar.reset();
-    });
+    .catch(err => console.log(err))
+    .finally(() => renderLoading(false, formAvatar));
 });
 
 // Добовление новой карточки
@@ -153,9 +151,9 @@ formNewPlace.addEventListener('submit', (evt) => {
   evt.preventDefault();
   // Сохраняем данные новой карточки на сервер
   renderLoading(true, formNewPlace);
-  addCard(cardNameInput.value, cardUrlInput.value)
+  addCard(inputNameNewCard.value, inputImageLinkNewCard.value)
     .then((dataCard) => {
-      cardsContainer.prepend(createCard(
+      containerCards.prepend(createCard(
         dataCard,
         dataCard.owner._id,
         handleCardImgClick,
@@ -163,10 +161,8 @@ formNewPlace.addEventListener('submit', (evt) => {
         handlerLikeIconCard
       ));
       closeModal(popupNewCard);
-    })
-    .finally(() => {
-      renderLoading(false, formNewPlace);
       formNewPlace.reset();
-    });
+    })
+    .catch(err => console.log(err))
+    .finally(() => renderLoading(false, formNewPlace));
 });
-

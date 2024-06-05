@@ -2,7 +2,8 @@ import { deleteCard, toggleLike } from './api.js';
 
 export const handlerDeleteIconClick = (cardElement, cardID) => {
   deleteCard(cardID)
-    .then(() => cardElement.remove());
+    .then(() => cardElement.remove())
+    .catch(err => console.log(err));
 }
 
 export const handlerLikeIconCard = (cardID, likeButton, likesCount) => {
@@ -12,6 +13,7 @@ export const handlerLikeIconCard = (cardID, likeButton, likesCount) => {
       likeButton.classList.toggle('card__like-button_is-active');
       likesCount.textContent = cardData.likes.length;
     })
+    .catch(err => console.log(err));  
 }
 
 // Функция создания карточки

@@ -15,8 +15,8 @@ export const handleOverlayClick = (evt) => {
 };
 
 export const handleEscapeKeydown = (evt) => {
-  const activePopup = document.querySelector('.popup_is-opened');
-  if (evt.key == 'Escape' && activePopup) {
+  if (evt.key == 'Escape') {
+    const activePopup = document.querySelector('.popup_is-opened');
     closeModal(activePopup);
   }
 };

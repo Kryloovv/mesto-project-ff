@@ -6,34 +6,22 @@ const apiConfig = {
   }
 };
 
+const checkResponse = (res) => {
+  return res.ok ? res.json() : Promise.reject('...');
+}
+
 export const getUserInfo = () => {
   return fetch(`${apiConfig.baseUrl}/users/me`, {
     headers: apiConfig.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  }); 
+  .then(res => checkResponse(res))
 };
 
 export const getInitialCards = () => {
   return fetch(`${apiConfig.baseUrl}/cards`, {
     headers: apiConfig.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(res => checkResponse(res))
 };
 
 export const userDataUpdate = (nameUser, aboutUser) => {
@@ -45,15 +33,7 @@ export const userDataUpdate = (nameUser, aboutUser) => {
       about: aboutUser
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(res => checkResponse(res))
 };
 
 export const addCard = (placeName, linkImg) => {
@@ -65,15 +45,7 @@ export const addCard = (placeName, linkImg) => {
       link: linkImg
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(res => checkResponse(res))
 };
 
 export const deleteCard = (cardID) => {
@@ -81,15 +53,7 @@ export const deleteCard = (cardID) => {
     method: 'DELETE',
     headers: apiConfig.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  }); 
+  .then(res => checkResponse(res))
 };
 
 export const toggleLike = (cardID, isLiked) => {
@@ -98,29 +62,14 @@ export const toggleLike = (cardID, isLiked) => {
       method: 'DELETE',
       headers: apiConfig.headers
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      console.log(err);
-    }); 
+    .then(res => checkResponse(res))
   } else {
     return fetch(`${apiConfig.baseUrl}/cards/likes/${cardID}`, {
       method: 'PUT',
       headers: apiConfig.headers
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    .then(res => checkResponse(res))
+    
   }
 };
 
@@ -132,13 +81,5 @@ export const avatarUpdate = (linkImg) => {
       avatar: linkImg
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(res => checkResponse(res))
 };
